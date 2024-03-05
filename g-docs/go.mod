@@ -1,4 +1,4 @@
-module main
+module import
 
 go 1.22.0
 
