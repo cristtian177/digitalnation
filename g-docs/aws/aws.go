@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -37,16 +36,22 @@ func (c *S3Client) Upload(file io.Reader, keyName string) (string, error) {
 		return "", fmt.Errorf("failed to upload file, %v", err)
 	}
 
-	// Genera una URL pre-firmada para el objeto
-	svc := s3.New(c.Session)
-	req, _ := svc.GetObjectRequest(&s3.GetObjectInput{
-		Bucket: aws.String(c.Bucket),
-		Key:    aws.String(keyName),
-	})
-	urlStr, err := req.Presign(15 * time.Minute) // URL válida por 15 minutos
-	if err != nil {
-		return "", fmt.Errorf("failed to sign request, %v", err)
-	}
+	/*
+
+		// Genera una URL pre-firmada para el objeto
+		svc := s3.New(c.Session)
+		req, _ := svc.GetObjectRequest(&s3.GetObjectInput{
+			Bucket: aws.String(c.Bucket),
+			Key:    aws.String(keyName),
+		})
+
+		urlStr, err := req.Presign(15 * time.Minute) // URL válida por 15 minutos
+		if err != nil {
+			return "", fmt.Errorf("failed to sign request, %v", err)
+		}
+	*/
+
+	urlStr := fmt.Sprintf("https://%s.s3.amazonaws.com/%s", c.Bucket, keyName)
 
 	return urlStr, nil
 }
