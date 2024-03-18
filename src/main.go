@@ -4,8 +4,8 @@ package main
 import (
 	"encoding/csv"
 	"fmt"
-	"import/aws"
-	"import/server"
+	"importlibss/src/aws"
+	"importlibss/src/server"
 	"net/http"
 	"os"
 
@@ -35,7 +35,7 @@ func loadCredentials(file string) (string, string, error) {
 	return record[0], record[1], nil
 }
 func main() {
-	accessKey, secretKey, err := loadCredentials("rootkey.csv") // Reemplaza con la ruta de tu archivo
+	accessKey, secretKey, err := loadCredentials("./rootkey.csv") // Reemplaza con la ruta de tu archivo
 	if err != nil {
 		fmt.Println("Error al cargar las credenciales:", err)
 		return

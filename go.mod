@@ -1,6 +1,7 @@
-module import
+module importlibss
 
-go 1.23
+
+go 1.17
 
 require github.com/aws/aws-sdk-go-v2/service/s3 v1.51.2
 
