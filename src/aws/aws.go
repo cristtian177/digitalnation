@@ -12,16 +12,21 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 )
 
+// S3Client es una estructura que contiene una sesión de AWS y el nombre de un bucket de S3
 type S3Client struct {
 	Session *session.Session
 	Bucket  string
 }
 
+// NewS3Client crea un nuevo cliente S3 con una sesión y un bucket
 func NewS3Client(session *session.Session, bucket string) *S3Client {
 	return &S3Client{Session: session, Bucket: bucket}
 }
 
+// Upload sube un archivo a S3 y devuelve la URL del objeto
 func (c *S3Client) Upload(file io.Reader, keyName string) (string, error) {
+	log.Println("Subiendo archivo a S3...")
+
 	// Crea un nuevo uploader con la sesión y la configuración por defecto
 	uploader := s3manager.NewUploader(c.Session)
 
@@ -32,7 +37,7 @@ func (c *S3Client) Upload(file io.Reader, keyName string) (string, error) {
 		Body:   file,
 		ACL:    aws.String("public-read"), // Hace que el objeto sea público
 	})
-	log.Println("File uploaded to", c.Bucket, keyName)
+	log.Println("Archivo subido a", c.Bucket, keyName)
 	if err != nil {
 		return "", fmt.Errorf("failed to upload file, %v", err)
 	}
@@ -49,15 +54,13 @@ func (c *S3Client) Upload(file io.Reader, keyName string) (string, error) {
 		return "", fmt.Errorf("failed to sign request, %v", err)
 	}
 
-	/*
-
-		urlStr := fmt.Sprintf("https://%s.s3.amazonaws.com/%s", c.Bucket, keyName)
-	*/
-
 	return urlStr, nil
 }
 
+// Delete elimina un archivo de S3
 func (c *S3Client) Delete(keyName string) error {
+	log.Println("Eliminando archivo de S3...")
+
 	// Crea un nuevo servicio S3
 	svc := s3.New(c.Session)
 
@@ -70,10 +73,14 @@ func (c *S3Client) Delete(keyName string) error {
 		return fmt.Errorf("failed to delete file, %v", err)
 	}
 
+	log.Println("Archivo eliminado de S3:", keyName)
 	return nil
 }
 
+// DeleteFolder elimina una carpeta de S3
 func (c *S3Client) DeleteFolder(folderName string) error {
+	log.Println("Eliminando carpeta de S3...")
+
 	// Crea un nuevo servicio S3
 	svc := s3.New(c.Session)
 
@@ -95,7 +102,10 @@ func (c *S3Client) DeleteFolder(folderName string) error {
 		if err != nil {
 			return fmt.Errorf("failed to delete object %s, %v", *item.Key, err)
 		}
+
+		log.Println("Objeto eliminado de S3:", *item.Key)
 	}
 
+	log.Println("Carpeta eliminada de S3:", folderName)
 	return nil
 }
