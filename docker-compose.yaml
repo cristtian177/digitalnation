@@ -1,9 +1,15 @@
+# Especificar la versión de Docker Compose
 version: "3"
 
+# Definir los servicios que componen tu aplicación
 services:
+  # Nombre del servicio
   app:
+    # Construir la imagen del contenedor a partir del Dockerfile en el directorio actual
     build: .
+    # Mapear el puerto 8080 del contenedor al puerto 8080 del host
     ports:
       - "8080:8080"
+    # Montar el archivo rootkey.csv del directorio actual en /app/rootkey.csv dentro del contenedor
     volumes:
       - ./rootkey.csv:/app/rootkey.csv
